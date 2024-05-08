@@ -6,6 +6,8 @@ var logger = require("morgan");
 var bodyParser = require("body-parser");
 //Tambahkan modul jsonwebtoken
 const jwt = require("jsonwebtoken");
+//tabahkan modul assert
+const assert = require("assert");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
@@ -39,20 +41,16 @@ app.get("/api/kelas", function (req, res) {
 app.get("/api/kelas/:id", function (req, res) {
   try {
     const kls = kelas.find((k) => k.id === parseInt(req.params.id));
-    // if (!kls) res.status(404).send("Kelas tidak ditemukan"); // tampilkan status 404
-    if (!kls)
-      res.status(404).json({
-        error: "ID_NOT_FOUND",
-        message: `ID Kelas ${req.params.id} tidak ditemukan`,
-      }); // tampilkan status 404
+    assert(kls, `ID Kelas ${req.params.id} tidak ditemukan`);
     res.status(200).json({ data: kls });
-    res.json({ data: kls });
     res.send({ data: kls });
     res.send(err);
   } catch (err) {
-    res
-      .status(500)
-      .json({ error: "INTERNAL_SERVER_ERROR", message: err.message });
+    if (err.name === "AssertionError") {
+      res.status(404).json({ error: err.message });
+    } else {
+      res.status(500).json({ error: err.message });
+    }
   }
 });
 
