@@ -32,11 +32,7 @@ app.get("/api/kelas", function (req, res) {
     res.send({ data: kelas });
     res.send(err);
   } catch (err) {
-    res.status(500).json({
-      status: false,
-      name: err.name,
-      message: err.message,
-    });
+    next(err);
   }
 });
 
@@ -48,11 +44,7 @@ app.get("/api/kelas/:id", function (req, res) {
     res.send({ data: kls });
     res.send(err);
   } catch (err) {
-    res.status(500).json({
-      status: false,
-      name: err.name,
-      message: err.message,
-    });
+    next(err);
   }
 });
 
@@ -74,11 +66,7 @@ app.post("/api/kelas", function (req, res) {
     res.send(kls);
     res.send(err);
   } catch (err) {
-    res.status(500).json({
-      status: false,
-      name: err.name,
-      message: err.message,
-    });
+    next(err);
   }
 });
 
@@ -99,11 +87,7 @@ app.put("/api/kelas/:id", function (req, res) {
     res.send({ pesan: "Data berhasil diupdate.", data: klas });
     res.send(err);
   } catch (err) {
-    res.status(500).json({
-      status: false,
-      name: err.name,
-      message: err.message,
-    });
+    next(err);
   }
 });
 
@@ -119,11 +103,7 @@ app.delete("/api/kelas/:id", function (req, res) {
     res.send({ pesan: "Data berhasil dihapus.", data: klas });
     res.send(err);
   } catch (err) {
-    res.status(500).json({
-      status: false,
-      name: err.name,
-      message: err.message,
-    });
+    next(err);
   }
 });
 
@@ -175,6 +155,14 @@ function verifyToken(req, res, next) {
     res.sendStatus(403);
   }
 }
+
+app.use((err, req, res, next) => {
+  res.status(500).json({
+    status: false,
+    name: err.name,
+    message: err.message,
+  });
+});
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
