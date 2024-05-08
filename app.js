@@ -39,12 +39,20 @@ app.get("/api/kelas", function (req, res) {
 app.get("/api/kelas/:id", function (req, res) {
   try {
     const kls = kelas.find((k) => k.id === parseInt(req.params.id));
-    if (!kls) res.status(404).send("Kelas tidak ditemukan"); // tampilkan status 404
+    // if (!kls) res.status(404).send("Kelas tidak ditemukan"); // tampilkan status 404
+    if (!kls)
+      res.status(404).json({
+        error: "ID_NOT_FOUND",
+        message: `ID Kelas ${req.params.id} tidak ditemukan`,
+      }); // tampilkan status 404
+    res.status(200).json({ data: kls });
     res.json({ data: kls });
     res.send({ data: kls });
     res.send(err);
   } catch (err) {
-    next(err);
+    res
+      .status(500)
+      .json({ error: "INTERNAL_SERVER_ERROR", message: err.message });
   }
 });
 
